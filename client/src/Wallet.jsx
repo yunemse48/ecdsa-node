@@ -13,18 +13,51 @@ function Wallet({ address, setAddress, balance, setBalance }) {
       setBalance(0);
     }
   }
+  
+  async function fetchInitialAddresses() {
+    try {
+      const response = await fetch("http://localhost:3042/initialAddresses");
+      const data = await response.json();
+      const addresses = data.addresses;
+      console.log(addresses);
+      const list = document.querySelector('#list');
+      let li = [];
+      
+      for (let i = 0; i < addresses.length; i++) {
+        li[i] = document.createElement('li');
+        li[i].textContent = addresses[i];
+      }
+      
+      li.forEach((element) => list.appendChild(element));
+
+
+      //return addresses;
+    } catch (error) {
+      console.error("Error fetching initial addresses:", error);
+    }
+  }
+
+  fetchInitialAddresses();
 
   return (
-    <div className="container wallet">
-      <h1>Your Wallet</h1>
+    <>
+      <div className="Initialised Wallets">
+        <h1>Wallet Addresses</h1>
+        <ul id="list">
+        </ul>
+      </div>
 
-      <label>
-        Wallet Address
-        <input placeholder="Type an address, for example: 0x1" value={address} onChange={onChange}></input>
-      </label>
+      <div className="container wallet">
+        <h1>Your Wallet</h1>
 
-      <div className="balance">Balance: {balance}</div>
-    </div>
+        <label>
+          Wallet Address
+          <input placeholder="Type an address" value={address} onChange={onChange}></input>
+        </label>
+
+        <div className="balance">Balance: {balance}</div>
+      </div>
+    </>
   );
 }
 

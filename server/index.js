@@ -1,15 +1,29 @@
-const express = require("express");
+import { initialiseWallet } from "./scripts/generate.js";
+import express from "express"
+import cors from "cors"
+
+//const express = require("express");
 const app = express();
-const cors = require("cors");
+//const cors = require("cors");
 const port = 3042;
 
 app.use(cors());
 app.use(express.json());
 
+const addresses = [];
+
+for (let i = 0; i < 3; i++) {
+  addresses.push(initialiseWallet());
+}
+
+app.get("/initialAddresses", (req, res) => {
+  res.json({ addresses });
+});
+
 const balances = {
-  "0x1": 100,
-  "0x2": 50,
-  "0x3": 75,
+  [addresses[0]]: 100,
+  [addresses[1]]: 50,
+  [addresses[2]]: 75,
 };
 
 app.get("/balance/:address", (req, res) => {

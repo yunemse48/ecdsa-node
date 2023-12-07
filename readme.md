@@ -32,7 +32,8 @@ https://github.com/yunemse48/ecdsa-node/assets/60715607/5354bcff-1a8e-4ad0-b679-
 
 - This project does not aim to perfectly replicate real blockchain systems. It serves as an educational tool and a starting point for understanding blockchain node development.
 - Private keys are stored on the server for simulation purposes. No sensitive data, including private keys, is sent to the server by end-users, ensuring a reasonable level of security.
-- The source contains lots of comments, unused and commented out codes, and `console.log`s for a better understanding of the code flow and debugging purposes. The project may be more sterile later. 
+- The source contains lots of comments, unused and commented out codes, and `console.log`s for a better understanding of the code flow and debugging purposes. The project may be more sterile later.
+- For now, the project doesn't run on a blockchain, and it doesn't create, mine and push any block. 
 - The project is open-ended and flexible, providing room for evolution and customisation.
 
 ## Technologies Used

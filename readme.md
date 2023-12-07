@@ -21,7 +21,12 @@ The ECDSA Node project provides a centralised environment where clients can inte
 - **`ethereum-cryptography` Library:** Gained practical experience with the "ethereum-cryptography" library for cryptographic operations.
 - All scripts in `/server/scripts/` have been created by me. 
 
-## Getting Started
+### Demonstration
+
+
+https://github.com/yunemse48/ecdsa-node/assets/60715607/bc725432-045d-40b8-af6c-b0fcc3330d59
+
+
 
 ## Note
 
@@ -42,6 +47,7 @@ The ECDSA Node project provides a centralised environment where clients can inte
 
 Special thanks to the original project contributors and the community for providing a foundation for this simulation.
 
+## Getting Started
 ### Client
 
 1. Navigate to the `/client` folder in your terminal.

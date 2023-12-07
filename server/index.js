@@ -2,15 +2,15 @@ import { initialiseWallet } from "./scripts/generate.js";
 import { readWallet } from "./scripts/virtualWalletRead.js";
 import { writeWallet } from "./scripts/virtualWalletWrite.js";
 import { createTransaction } from "./scripts/createTransaction.js";
-import express from "express"
-import cors from "cors"
-import expressWs from "express-ws"
-import WebSocket from "ws"
 import { recoverPubKey } from "./scripts/recoverPubKey.js";
 import { signTransaction } from "./scripts/signTransaction.js";
 import { saveTransaction } from "./scripts/saveTransaction.js";
 import { verifySignature } from "./scripts/verifySignature.js";
 import { readTransactions } from "./scripts/readTransactions.js";
+import express from "express"
+import cors from "cors"
+import expressWs from "express-ws"
+import WebSocket from "ws"
 
 //const express = require("express");
 const app = express();

@@ -20,6 +20,7 @@ const expressWsInstance = expressWs(app); // Attaching WebSocket functionality t
 app.use(cors());
 app.use(express.json());
 
+export let totalTransactions = 0;
 const addresses = [];
 
 for (let i = 0; i < 3; i++) {
@@ -88,10 +89,12 @@ app.post("/send", (req, res) => {
           console.log("Nonce incremented by 1");
 
           // update the virtual wallet
-          writeWallet(JSON.stringify(data));
+          writeWallet(JSON.stringify(data, null, 4));
 
           // save the signed transaction
           saveTransaction(signedTransaction, hexHash);
+
+          totalTransactions += 1;
 
           const txHash = hexHash;
           const compactHexSignature = tx_sign_hash[4];

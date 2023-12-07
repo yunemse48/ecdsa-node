@@ -32,7 +32,7 @@ export function initialiseWallet() {
     virtualWallet[hexAddress] = { privateKey: toHex(privateKey), publicKey: toHex(publicKey), nonce: 0};
     console.log("VirtualWallet:" + JSON.stringify(virtualWallet));
 
-    const data = JSON.stringify(virtualWallet);
+    const data = JSON.stringify(virtualWallet, null, 4);
     writeWallet(data);
 
     return hexAddress;

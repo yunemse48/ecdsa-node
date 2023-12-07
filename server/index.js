@@ -10,6 +10,7 @@ import { recoverPubKey } from "./scripts/recoverPubKey.js";
 import { signTransaction } from "./scripts/signTransaction.js";
 import { saveTransaction } from "./scripts/saveTransaction.js";
 import { verifySignature } from "./scripts/verifySignature.js";
+import { readTransactions } from "./scripts/readTransactions.js";
 
 //const express = require("express");
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.json());
 
 export let totalTransactions = 0;
 const addresses = [];
+const transactions = {};
 
 for (let i = 0; i < 3; i++) {
   addresses.push(initialiseWallet());
@@ -93,14 +95,15 @@ app.post("/send", (req, res) => {
 
           // save the signed transaction
           saveTransaction(signedTransaction, hexHash);
-
+          Object.assign(transactions, readTransactions());
           totalTransactions += 1;
 
           const txHash = hexHash;
           const compactHexSignature = tx_sign_hash[4];
           const tx = JSON.stringify(signedTransaction, undefined, 4); 
 
-          res.send({ balance: balances[sender], message: "TX Hash: " + txHash + 
+          res.send({ balance: balances[sender], message: "TRANSACTION DETAILS" + "\n--------------" +
+                                                        "\n\nTX Hash: " + txHash + 
                                                         "\n\nSignature: " + compactHexSignature + 
                                                         "\n\nTransaction: " + tx});
           //res.status(200).send({ message: "Success!" });
@@ -142,6 +145,10 @@ app.post("/send", (req, res) => {
 
 app.get("/initialAddresses", (req, res) => {
   res.json({ keys: Object.keys(balances) });
+});
+
+app.get("/transactionHistory", (req, res) => {
+    res.json({ transactions });
 });
 
 app.listen(port, () => {

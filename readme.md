@@ -24,7 +24,7 @@ The ECDSA Node project provides a centralised environment where clients can inte
 ### Demonstration
 
 
-https://github.com/yunemse48/ecdsa-node/assets/60715607/bc725432-045d-40b8-af6c-b0fcc3330d59
+https://github.com/yunemse48/ecdsa-node/assets/60715607/5354bcff-1a8e-4ad0-b679-0ca89f0b401f
 
 
 

@@ -12,13 +12,14 @@ function Transfer({ address, setBalance }) {
 
     try {
       const {
-        data: { balance },
+        data: { balance, message },
       } = await server.post(`send`, {
         sender: address,
         amount: parseInt(sendAmount),
         recipient,
       });
       setBalance(balance);
+      alert(message);
     } catch (ex) {
       alert(ex.response.data.message);
     }

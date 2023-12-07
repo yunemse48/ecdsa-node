@@ -1,8 +1,15 @@
 import { initialiseWallet } from "./scripts/generate.js";
+import { readWallet } from "./scripts/virtualWalletRead.js";
+import { writeWallet } from "./scripts/virtualWalletWrite.js";
+import { createTransaction } from "./scripts/createTransaction.js";
 import express from "express"
 import cors from "cors"
 import expressWs from "express-ws"
 import WebSocket from "ws"
+import { recoverPubKey } from "./scripts/recoverPubKey.js";
+import { signTransaction } from "./scripts/signTransaction.js";
+import { saveTransaction } from "./scripts/saveTransaction.js";
+import { verifySignature } from "./scripts/verifySignature.js";
 
 //const express = require("express");
 const app = express();
@@ -43,11 +50,79 @@ app.post("/send", (req, res) => {
 
   if (balances[sender] < amount) {
     res.status(400).send({ message: "Not enough funds!" });
-  } else {
-    balances[sender] -= amount;
-    balances[recipient] += amount;
-    res.send({ balance: balances[sender] });
-    console.log("Balances(POST send/): " + JSON.stringify(balances, null, 2));
+  }
+  else if (recipient === sender) {
+    res.status(400).send({ message: "Sender and recipient cannot be the same!" });
+  } 
+  else {
+    const data = readWallet();
+    console.log("File read: " + JSON.stringify(data));
+    // if the sender has a privKey in virtual wallet, call signTransaction function
+    // verify the transaction signature, if verified continue and increment the nonce by 1
+    if ( sender in data ) {
+      if ( data[sender].privateKey !== null ) {
+        let isSigned = false;
+        const rawTransaction = createTransaction(sender, recipient, amount, data[sender].nonce);
+        const tx_sign_hash = signTransaction(data[sender].privateKey, rawTransaction);
+        const signedTransaction = tx_sign_hash[0];
+        const signature = tx_sign_hash[1];
+        const hash = tx_sign_hash[2];
+        const hexHash = tx_sign_hash[3];
+        const recoveredPubKey = recoverPubKey(signature, hash);
+        isSigned = verifySignature(signature, hash, recoveredPubKey);
+        
+        if (isSigned) {
+          console.log("Signature verified!");
+          // process the transfer
+          balances[sender] -= amount;
+          balances[recipient] += amount;
+
+          // add the recipient address to loca wallet object with nonce = 0 if not existing
+          if (!(recipient in data)) {
+            data[recipient] = {privateKey: null, publicKey: null, nonce: 0};
+            //writeWallet(JSON.stringify(data));
+          }
+          
+          // increment sender nonce by 1
+          data[sender].nonce += 1;
+          console.log("Nonce incremented by 1");
+
+          // update the virtual wallet
+          writeWallet(JSON.stringify(data));
+
+          // save the signed transaction
+          saveTransaction(signedTransaction, hexHash);
+
+          const txHash = hexHash;
+          const compactHexSignature = tx_sign_hash[4];
+          const tx = JSON.stringify(signedTransaction, undefined, 4); 
+
+          res.send({ balance: balances[sender], message: "TX Hash: " + txHash + 
+                                                        "\n\nSignature: " + compactHexSignature + 
+                                                        "\n\nTransaction: " + tx});
+          //res.status(200).send({ message: "Success!" });
+          console.log("Balances(POST send/): " + JSON.stringify(balances, null, 2));
+
+        }
+          // process transaction
+          // update balances
+          // update nonce
+          // update wallet
+          // update totalTransactions count
+          // store transaction in transaction-history.json
+
+      }
+      else {
+        res.status(400).send({ message: "This address is not authorised to make a transaction!\nNO PRIVATE KEY!" });
+      }
+    }
+    else {
+      data[sender] = {privateKey: null, publicKey: null, nonce: 0};
+      writeWallet(JSON.stringify(data));
+      res.status(400).send({ message: "This address is not authorised to make a transaction!\nSender is not in the wallet.\nNO PRIVATE KEY!" });
+    }
+    
+    
 
     expressWsInstance.getWss().clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {

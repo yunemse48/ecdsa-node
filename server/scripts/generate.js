@@ -6,6 +6,9 @@ const { toHex } = require("ethereum-cryptography/utils/toHex");*/
 import { secp256k1 } from "ethereum-cryptography/secp256k1";
 import { keccak256 } from "ethereum-cryptography/keccak";
 import { toHex } from "ethereum-cryptography/utils";
+import { writeWallet } from "./virtualWalletWrite.js";
+
+const virtualWallet = {};
 
 export function initialiseWallet() {
     //const privateKey = randomPrivateKey();
@@ -26,20 +29,11 @@ export function initialiseWallet() {
     const hexAddress = "0x" + toHex(address);
     console.log("Address:" + hexAddress);
 
+    virtualWallet[hexAddress] = { privateKey: toHex(privateKey), publicKey: toHex(publicKey), nonce: 0};
+    console.log("VirtualWallet:" + JSON.stringify(virtualWallet));
+
+    const data = JSON.stringify(virtualWallet);
+    writeWallet(data);
+
     return hexAddress;
 }
-
-const addresses = [];
-
-for (let i = 0; i < 3; i++) {
-  addresses.push(initialiseWallet());
-}
-
-const balances = {
-  [addresses[0]]: 100,
-  [addresses[1]]: 50,
-  [addresses[2]]: 75,
-};
-
-console.log(balances);
-console.log([addresses[1]]);
